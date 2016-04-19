@@ -4,8 +4,8 @@ import { shouldRender, parseDateString, toDateString, pad } from "../../utils";
 import SelectWidget from "../widgets/SelectWidget";
 
 
-function rangeOptions(start, stop) {
-  let options = [];
+function rangeOptions(type, start, stop) {
+  let options = [{value: undefined, label: type}];
   for (let i=start; i<= stop; i++) {
     options.push({value: i, label: pad(i, 2)});
   }
@@ -15,18 +15,13 @@ function rangeOptions(start, stop) {
 function DateElement({type, range, value, select, rootId}) {
   const id = rootId + "_" + type;
   return (
-    <span>
-      <SelectWidget
-        schema={{type: "integer"}}
-        id={id}
-        className="form-control"
-        options={rangeOptions(range[0], range[1])}
-        value={value}
-        onChange={(value) => select(type, value)} />
-      <p className="text-center help-block">
-        <label htmlFor={id}><small>{type}</small></label>
-      </p>
-    </span>
+    <SelectWidget
+      schema={{type: "integer"}}
+      id={id}
+      className="form-control"
+      options={rangeOptions(type, range[0], range[1])}
+      value={typeof value === "undefined" ? "" : value}
+      onChange={(value) => select(type, value)} />
   );
 }
 
@@ -49,13 +44,25 @@ class DateWidget extends Component {
   }
 
   onChange = (property, value) => {
+    const {time} = this.props;
     this.setState({[property]: value}, () => {
+      // Only propagate to parent state if we have a complete date{time}
+      const valid = Object.keys(this.state).length === (time ? 6 : 3);
+      if (valid) {
+        this.props.onChange(toDateString(this.state));
+      }
+    });
+  };
+
+  setNow = (event) => {
+    event.preventDefault();
+    this.setState(parseDateString(new Date().toJSON()), () => {
       this.props.onChange(toDateString(this.state));
     });
   };
 
-  get dateElements() {
-    const {id, time} = this.props;
+  get dateElementProps() {
+    const {time} = this.props;
     const {year, month, day, hour, minute, second} = this.state;
     const data = [
       {type: "year", range: [1900, 2020], value: year},
@@ -69,16 +76,23 @@ class DateWidget extends Component {
         {type: "second", range: [0, 59], value: second}
       );
     }
-    return data.map(props => {
-      return <DateElement rootId={id} select={this.onChange} {...props} />;
-    });
+    return data;
   }
 
   render() {
+    const {id} = this.props;
     return (
       <ul className="list-inline">{
-        this.dateElements.map((elem, i) => <li key={i}>{elem}</li>)
-      }</ul>
+        this.dateElementProps.map((props, i) => (
+          <li key={i}>
+            <DateElement rootId={id} select={this.onChange} {...props} />
+          </li>
+        ))
+      }
+        <li>
+          <a href="#" className="btn btn-success" onClick={this.setNow}>Now</a>
+        </li>
+      </ul>
     );
   }
 }

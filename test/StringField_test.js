@@ -220,12 +220,12 @@ describe("StringField", () => {
         format: "date-time",
       }});
 
-      Simulate.change(node.querySelector("#root_year"), {target: {value: "2012"}});
-      Simulate.change(node.querySelector("#root_month"), {target: {value: "10"}});
-      Simulate.change(node.querySelector("#root_day"), {target: {value: "2"}});
-      Simulate.change(node.querySelector("#root_hour"), {target: {value: "1"}});
-      Simulate.change(node.querySelector("#root_minute"), {target: {value: "2"}});
-      Simulate.change(node.querySelector("#root_second"), {target: {value: "3"}});
+      Simulate.change(node.querySelector("#root_year"), {target: {value: 2012}});
+      Simulate.change(node.querySelector("#root_month"), {target: {value: 10}});
+      Simulate.change(node.querySelector("#root_day"), {target: {value: 2}});
+      Simulate.change(node.querySelector("#root_hour"), {target: {value: 1}});
+      Simulate.change(node.querySelector("#root_minute"), {target: {value: 2}});
+      Simulate.change(node.querySelector("#root_second"), {target: {value: 3}});
 
       expect(comp.state.formData).eql("2012-10-02T01:02:03.000Z");
     });
@@ -267,17 +267,17 @@ describe("StringField", () => {
       const lengths = [].map.call(node.querySelectorAll("select"), node => node.length);
 
       expect(lengths).eql([
-        121, // from 1900 to 2020
-        12,
-        31,
-        24,
-        60,
-        60
+        121 + 1, // from 1900 to 2020 + undefined
+        12 + 1,
+        31 + 1,
+        24 + 1,
+        60 + 1,
+        60 + 1
       ]);
       const monthOptions = node.querySelectorAll("select#root_month option");
       const monthOptionsValues = [].map.call(monthOptions, option => option.value);
       expect(monthOptionsValues).eql([
-        "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]);
+        "month", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]);
     });
 
     it("should render the widgets with the expected options' labels", () => {
@@ -289,7 +289,7 @@ describe("StringField", () => {
       const monthOptions = node.querySelectorAll("select#root_month option");
       const monthOptionsLabels = [].map.call(monthOptions, option => option.text);
       expect(monthOptionsLabels).eql([
-        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]);
+        "month", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]);
     });
   });
 
@@ -334,9 +334,9 @@ describe("StringField", () => {
         format: "date-time",
       }, uiSchema});
 
-      Simulate.change(node.querySelector("#root_year"), {target: {value: "2012"}});
-      Simulate.change(node.querySelector("#root_month"), {target: {value: "10"}});
-      Simulate.change(node.querySelector("#root_day"), {target: {value: "2"}});
+      Simulate.change(node.querySelector("#root_year"), {target: {value: 2012}});
+      Simulate.change(node.querySelector("#root_month"), {target: {value: 10}});
+      Simulate.change(node.querySelector("#root_day"), {target: {value: 2}});
 
       expect(comp.state.formData).eql("2012-10-02T00:00:00.000Z");
     });
@@ -375,14 +375,14 @@ describe("StringField", () => {
       const lengths = [].map.call(node.querySelectorAll("select"), node => node.length);
 
       expect(lengths).eql([
-        121, // from 1900 to 2020
-        12,
-        31,
+        121 + 1, // from 1900 to 2020 + undefined
+        12 + 1,
+        31 + 1,
       ]);
       const monthOptions = node.querySelectorAll("select#root_month option");
       const monthOptionsValues = [].map.call(monthOptions, option => option.value);
       expect(monthOptionsValues).eql([
-        "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]);
+        "month", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]);
     });
 
     it("should render the widgets with the expected options' labels", () => {
@@ -394,7 +394,7 @@ describe("StringField", () => {
       const monthOptions = node.querySelectorAll("select#root_month option");
       const monthOptionsLabels = [].map.call(monthOptions, option => option.text);
       expect(monthOptionsLabels).eql([
-        "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]);
+        "month", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]);
     });
   });
 
